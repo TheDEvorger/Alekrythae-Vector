@@ -1,0 +1,221 @@
+# ============================================================
+# Alekrythae Vector - repository hygiene / security ignore list
+# ============================================================
+
+# ----------------------------
+# Node.js dependencies / caches
+# ----------------------------
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+.yarn/cache/
+.yarn/unplugged/
+.pnpm-store/
+
+# Keep lockfiles tracked intentionally.
+# DO NOT add package-lock.json / yarn.lock / pnpm-lock.yaml here.
+
+# ----------------------------
+# Secrets / environment files
+# ----------------------------
+.env
+.env.*
+!.env.example
+*.env
+*.secret
+*.secrets
+secrets/
+.secret/
+.credentials/
+credentials/
+
+# Generic key / certificate material
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.crt
+*.cer
+*.der
+*.csr
+*.ovpn
+
+# SSH / signing material accidentally copied into repo
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+*.gpg
+*.asc
+
+# Local application auth/session material
+*.token
+*.session
+*.auth
+session.json
+credentials.json
+
+# ----------------------------
+# Alekrythae local runtime data
+# ----------------------------
+engine.pid
+engine.log
+start-engine.vbs
+*.pid
+*.log
+logs/
+runtime/
+.local/
+.localdata/
+.localappdata/
+
+# Local engine installs / downloaded runtime artifacts
+VectorEngine/
+engine/runtime/
+engine/cache/
+engine/downloads/
+engine/tmp/
+engine/temp/
+
+# ----------------------------
+# User/generated images and SVG output
+# Avoid accidentally publishing private test media or huge outputs.
+# Keep deliberately curated examples under docs/examples/ if needed.
+# ----------------------------
+output/
+outputs/
+exports/
+generated/
+test-output/
+tmp-output/
+
+# Large/generated vector artifacts
+*.svg.tmp
+*.svg.bak
+*.svg.autosave
+
+# Private/local test media directories
+private-tests/
+local-tests/
+test-data-private/
+fixtures-private/
+samples-private/
+
+# ----------------------------
+# Crash dumps / diagnostics
+# ----------------------------
+*.dmp
+*.dump
+*.core
+*.stackdump
+crash-reports/
+crashdumps/
+diagnostics/
+
+# ----------------------------
+# Temporary / backup files
+# ----------------------------
+*.tmp
+*.temp
+*.bak
+*.old
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+~$*
+.cache/
+.temp/
+temp/
+tmp/
+
+# ----------------------------
+# Windows
+# ----------------------------
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ----------------------------
+# macOS
+# ----------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# ----------------------------
+# Linux desktop / filesystem
+# ----------------------------
+.directory
+.Trash-*
+
+# ----------------------------
+# Editors / IDEs
+# ----------------------------
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.example.json
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.code-workspace
+
+# Visual Studio / .NET artifacts if Core tooling is opened nearby
+.vs/
+[Bb]in/
+[Oo]bj/
+TestResults/
+*.userprefs
+
+# ----------------------------
+# Build / packaging artifacts
+# ----------------------------
+dist/
+build/
+release/
+releases/
+artifacts/
+packages/
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+
+# ----------------------------
+# Coverage / test tooling
+# ----------------------------
+coverage/
+.nyc_output/
+*.lcov
+
+# ----------------------------
+# Misc local metadata
+# ----------------------------
+*.local
+*.private
+.localhistory/
+.history/
+
+# ============================================================
+# IMPORTANT:
+# .gitignore prevents accidental NEW commits only.
+# It does not remove files already tracked by Git and it does
+# not make a committed secret safe again.
+# ============================================================

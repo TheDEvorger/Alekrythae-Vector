@@ -1,0 +1,9 @@
+{
+  "name": "alekrythae-vector-engine",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local official VisionCortex VTracer engine for Alekrythae Vector",
+  "dependencies": {
+    "@visioncortex/vtracer": "1.0.0-alpha.3"
+  }
+}
