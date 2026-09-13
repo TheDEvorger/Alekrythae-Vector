@@ -22,7 +22,7 @@ Ałek’ryŧhæ Vector is a desktop raster-to-vector tool designed for **local p
 
 - Color photo tracing with **VisionCortex VTracer 1.0** (`photo` + `stacked`)
 - Real **2–1024 `maxColors`** control
-- High-fidelity **1024 / HAM** mode with no hidden color cap
+- High-fidelity **1024 / RAW** mode with no hidden color cap
 - Detail, curve, cleanup and quality controls
 - Black-and-white tracing with adjustable threshold
 - Optional background removal
@@ -70,7 +70,7 @@ and listens on the loopback interface:
 |---|---|
 | **Color** | Sets the VTracer color limit from `2` to `1024`. |
 | **Detail** | Controls how strongly small shapes and fine regions are preserved. |
-| **Curve** | Adjusts Bézier smoothing and curve behaviour. |
+| **Curves** | Adjusts Bézier smoothing and curve behaviour. |
 | **Cleanup** | Removes or merges very small regions for a cleaner result. |
 | **Quality** | Controls the overall fidelity / processing profile. |
 | **Threshold** | Sets the black/white split point in monochrome mode. |
@@ -83,7 +83,7 @@ Setting **Color = 1024** or **Quality = 1024** activates the high-fidelity profi
 In this mode the application prioritizes detail over speed and file size. Large images can therefore produce very large SVG files and may take considerably longer to process.
 
 <details>
-<summary><strong>Technical 1024 / HAM profile</strong></summary>
+<summary><strong>Technical 1024 / RAW profile</strong></summary>
 
 The current high-fidelity profile uses:
 
@@ -106,7 +106,7 @@ The intention is simple: **1024 means maximum fidelity, not maximum efficiency.*
 ```text
 Select image
     ↓
-Choose Color or B/W mode
+Choose Color or Black / White mode
     ↓
 Adjust tracing controls
     ↓

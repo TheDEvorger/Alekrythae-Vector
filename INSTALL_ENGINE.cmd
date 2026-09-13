@@ -4,20 +4,20 @@ chcp 65001 >nul
 cd /d "%~dp0"
 
 echo.
-echo [Alekrythae Vector v0.1.0] VisionCortex VTracer 1.0 motoru kuruluyor...
+echo [Alekrythae Vector v0.1.0] Installing VisionCortex VTracer 1.0 engine...
 echo.
 
 where node >nul 2>nul
 if errorlevel 1 (
-  echo HATA: Node.js bulunamadi.
-  echo Node.js LTS kurup bu dosyayi yeniden calistir.
+  echo ERROR: Node.js was not found.
+  echo Install Node.js LTS and run this file again.
   pause
   exit /b 1
 )
 
 where npm >nul 2>nul
 if errorlevel 1 (
-  echo HATA: npm bulunamadi.
+  echo ERROR: npm was not found.
   pause
   exit /b 1
 )
@@ -37,25 +37,25 @@ if errorlevel 1 goto :copy_error
 copy /y "%~dp0engine\package.json" "%ENGINE_DIR%\package.json" >nul
 if errorlevel 1 goto :copy_error
 
-rem Eski neplex motor paketleri artik kullanilmiyor.
+rem Legacy Neplex engine packages are no longer used.
 if exist "%ENGINE_DIR%\node_modules\@neplex" rmdir /s /q "%ENGINE_DIR%\node_modules\@neplex" >nul 2>nul
 if exist "%ENGINE_DIR%\package-lock.json" del /q "%ENGINE_DIR%\package-lock.json" >nul 2>nul
 
-echo [1/4] Resmi VisionCortex VTracer 1.0 kuruluyor...
+echo [1/4] Installing official VisionCortex VTracer 1.0...
 call npm install --prefix "%ENGINE_DIR%" --no-audit --no-fund --omit=dev
 if errorlevel 1 (
   echo.
-  echo HATA: @visioncortex/vtracer indirilemedi.
-  echo Internet baglantisini kontrol et.
+  echo ERROR: Failed to download @visioncortex/vtracer.
+  echo Check your internet connection.
   pause
   exit /b 3
 )
 
-echo [2/4] VTracer 1.0 API dogrulaniyor...
-node -e "const p=process.env.LOCALAPPDATA+'\\Alekrythae\\VectorEngine\\node_modules\\@visioncortex\\vtracer';const V=require(p);if(typeof V.convertPixels==='function'){console.log('OK: official VTracer convertPixels bulundu')}else{process.exit(2)}"
+echo [2/4] Validating VTracer 1.0 API...
+node -e "const p=process.env.LOCALAPPDATA+'\\Alekrythae\\VectorEngine\\node_modules\\@visioncortex\\vtracer';const V=require(p);if(typeof V.convertPixels==='function'){console.log('OK: official VTracer convertPixels found')}else{process.exit(2)}"
 if errorlevel 1 (
   echo.
-  echo HATA: @visioncortex/vtracer kuruldu ama API acilamadi.
+  echo ERROR: @visioncortex/vtracer was installed but its API could not be loaded.
   pause
   exit /b 4
 )
@@ -63,7 +63,7 @@ if errorlevel 1 (
 set "NODE_EXE="
 for /f "delims=" %%N in ('where node') do if not defined NODE_EXE set "NODE_EXE=%%N"
 if not defined NODE_EXE (
-  echo HATA: node.exe yolu bulunamadi.
+  echo ERROR: node.exe path could not be found.
   pause
   exit /b 6
 )
@@ -75,7 +75,7 @@ set "LOG_FILE=%ENGINE_DIR%\engine.log"
   echo sh.Run cmd, 0, False
 ) > "%ENGINE_DIR%\start-engine.vbs"
 
-echo [3/4] Motor baslatiliyor...
+echo [3/4] Starting engine...
 del /q "%LOG_FILE%" >nul 2>nul
 "%SystemRoot%\System32\wscript.exe" "%ENGINE_DIR%\start-engine.vbs"
 
@@ -93,7 +93,7 @@ del /q "%STARTUP_DIR%\Alekrythae-Vector-Engine.vbs" >nul 2>nul
 copy /y "%ENGINE_DIR%\start-engine.vbs" "%STARTUP_DIR%\Alekrythae-Vector-Engine.vbs" >nul
 
 echo.
-echo TAMAM: VisionCortex VTracer 1.0 Photo/Stacked motoru hazir.
+echo DONE: VisionCortex VTracer 1.0 Photo/Stacked engine is ready.
 echo Health: http://127.0.0.1:17324/health
 echo.
 pause
@@ -101,14 +101,14 @@ exit /b 0
 
 :copy_error
 echo.
-echo HATA: engine dosyalari kopyalanamadi.
+echo ERROR: Engine files could not be copied.
 echo ZIP'i once normal bir klasore cikart.
 pause
 exit /b 2
 
 :engine_failed
 echo.
-echo HATA: Motor kuruldu ama 127.0.0.1:17324 uzerinde cevap vermedi.
+echo ERROR: The engine was installed but did not respond on 127.0.0.1:17324.
 if exist "%LOG_FILE%" (
   echo.
   echo ---- engine.log ----

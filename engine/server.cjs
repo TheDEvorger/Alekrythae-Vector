@@ -39,7 +39,7 @@ function readBody(req, maxBytes) {
     const chunks=[]; let size=0;
     req.on('data', chunk => {
       size += chunk.length;
-      if (size > maxBytes) { reject(new Error('Girdi çok büyük')); req.destroy(); return; }
+      if (size > maxBytes) { reject(new Error('Input is too large')); req.destroy(); return; }
       chunks.push(chunk);
     });
     req.on('end', () => resolve(Buffer.concat(chunks)));

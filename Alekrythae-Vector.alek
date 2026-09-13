@@ -23,14 +23,14 @@ AV.yieldUI=()=>new Promise(r=>setTimeout(r,0));
 AV.now=()=>globalThis.performance?.now?.()??Date.now();
 AV.baseName=()=>((AV.state.file&&AV.state.file.name)||'Alekrythae-Vector').replace(/\.[^.]+$/,'').replace(/[^\p{L}\p{N}._-]+/gu,'_');
 AV.downloadBlob=(blob,name)=>{const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500)};
-AV.canvasBlob=(c,type='image/png')=>new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('Canvas blob üretilemedi.')),type));
+AV.canvasBlob=(c,type='image/png')=>new Promise((res,rej)=>c.toBlob(b=>b?res(b):rej(new Error('Failed to create canvas blob.')),type));
 })();
 
 (function(){
 'use strict';
 const AV=window.AV;
 let shown=false;
-AV.fatal=function(err){if(shown)return;shown=true;const t=AV.escapeHtml(err?.stack||err?.message||err||'Bilinmeyen hata');document.body.innerHTML=`<div style="min-height:100vh;display:grid;place-items:center;background:#01040a;color:#eaf7ff;font:13px Segoe UI;padding:32px"><div style="max-width:900px;border:1px solid rgba(255,105,130,.38);background:#07101b;padding:24px;clip-path:polygon(0 12px,12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)"><b>Ałek’ryŧhæ Vector başlatılamadı.</b><pre style="white-space:pre-wrap;color:#ffb7c3">${t}</pre></div></div>`};
+AV.fatal=function(err){if(shown)return;shown=true;const t=AV.escapeHtml(err?.stack||err?.message||err||'Unknown error');document.body.innerHTML=`<div style="min-height:100vh;display:grid;place-items:center;background:#01040a;color:#eaf7ff;font:13px Segoe UI;padding:32px"><div style="max-width:900px;border:1px solid rgba(255,105,130,.38);background:#07101b;padding:24px;clip-path:polygon(0 12px,12px 0,100% 0,100% calc(100% - 12px),calc(100% - 12px) 100%,0 100%)"><b>Ałek’ryŧhæ Vector could not be started.</b><pre style="white-space:pre-wrap;color:#ffb7c3">${t}</pre></div></div>`};
 window.addEventListener('error',e=>AV.fatal(e.error||e.message));
 window.addEventListener('unhandledrejection',e=>AV.fatal(e.reason));
 })();
@@ -51,7 +51,7 @@ AV.CONFIG={
     zoom:1, panX:0, panY:0
   }
 };
-AV.qualityName=v=>v>=1000?'HAM':v>=850?'AŞIRI':v>=700?'ULTRA':v>=520?'YÜKSEK':v>=280?'DENGELİ':'HIZLI';
+AV.qualityName=v=>v>=1000?'RAW':v>=850?'EXTREME':v>=700?'ULTRA':v>=520?'HIGH':v>=280?'BALANCED':'FAST';
 })();
 
 (function(){
@@ -74,7 +74,7 @@ const host=window.__alekAssets||{};
 const embedded=window.__AV_EMBEDDED_ASSETS||{};
 const uniq=xs=>[...new Set(xs.filter(Boolean))];
 
-// Kanonik sıra: Core'un enjekte ettiği exact BlueMoon -> varsa exact local branding -> Core Resources -> app yanındaki asset.
+// Canonical order: exact BlueMoon injected by Core -> local branding if available -> Core Resources -> asset next to the app.
 AV.ASSETS={
  moon:uniq([
    host.moon,
@@ -155,66 +155,66 @@ const html=`
   <header class="topbar">
     <div class="brand"><img class="top-wordmark" alt="Ałek’ryŧhæ"><span class="brand-fallback">Ałek’ryŧhæ</span><i>VECTOR</i></div>
     <div class="top-actions">
-      <div class="mode-switch" aria-label="SVG türü">
-        <button class="mode-btn active" data-mode="color">Renkli</button>
-        <button class="mode-btn" data-mode="mono">Siyah · Beyaz</button>
+      <div class="mode-switch" aria-label="SVG mode">
+        <button class="mode-btn active" data-mode="color">Color</button>
+        <button class="mode-btn" data-mode="mono">Black · White</button>
       </div>
-      <button class="btn save primary" disabled><img src="${icon('export')}">SVG Kaydet</button>
-      <button class="btn exit-app danger"><img src="${icon('close')}">Çıkış</button>
+      <button class="btn save primary" disabled><img src="${icon('export')}">Save SVG</button>
+      <button class="btn exit-app danger"><img src="${icon('close')}">Exit</button>
     </div>
   </header>
 
   <main class="studio">
     <aside class="source-panel">
-      <div class="panel-title source-title"><span>KAYNAK</span><small class="source-info">Görsel yok</small><button class="source-pick pick" type="button">DOSYA SEÇ</button></div>
+      <div class="panel-title source-title"><span>SOURCE</span><small class="source-info">No image</small><button class="source-pick pick" type="button">CHOOSE FILE</button></div>
       <div class="source-card source-drop">
         <div class="empty source-empty">
           <div class="mini-moon-shell"><img class="moon-mini" alt=""></div>
-          <strong>Görsel seç</strong>
+          <strong>Choose an image</strong>
           <span>PNG · JPG · WEBP · BMP</span>
         </div>
         <div class="scene source-scene"><img class="canvas-source" alt=""></div>
       </div>
-      <div class="source-tip">Tekerlek: yakınlaştır · Sürükle: taşı</div>
+      <div class="source-tip">Wheel: zoom · Drag: pan</div>
     </aside>
 
     <section class="result-panel">
       <div class="result-head">
-        <div><span>SVG ÖNİZLEME</span><small class="trace-info">VTracer 1.0 Photo · Stacked</small></div>
+        <div><span>SVG PREVIEW</span><small class="trace-info">VTracer 1.0 Photo · Stacked</small></div>
         <div class="preview-badge">WYSIWYG</div>
       </div>
       <div class="viewer result-viewer">
         <div class="empty result-empty">
           <div class="preview-mark"><div class="preview-ring"></div><img class="moon-preview" alt=""></div>
-          <strong>Vektör burada oluşur</strong>
-          <span>Soldan bir görsel seç. Önizlemede gördüğün SVG aynen kaydedilir.</span>
+          <strong>Your vector appears here</strong>
+          <span>Choose an image on the left. The SVG shown in the preview is exactly what will be saved.</span>
         </div>
         <div class="scene result-scene"><img class="canvas-result" alt=""></div>
-        <div class="busy"><div class="busy-card"><b>SVG ÇİZİLİYOR</b><span class="busy-stage">hazırlık</span><div class="progress"><i></i></div></div></div>
+        <div class="busy"><div class="busy-card"><b>GENERATING SVG</b><span class="busy-stage">preparing</span><div class="progress"><i></i></div></div></div>
       </div>
     </section>
 
     <aside class="settings-panel">
-      <div class="panel-title"><span>AYARLAR</span><small class="mode-label">RENKLİ</small></div>
+      <div class="panel-title"><span>SETTINGS</span><small class="mode-label">COLOR</small></div>
       <div class="settings-body">
-        <div class="setting color-only"><div class="setting-copy"><label>Renk</label><span>Kaç ana renk kullanılsın</span></div><b class="colors-v"></b><input class="range colors" type="range" min="2" max="1024" step="1"></div>
-        <div class="setting mono-only"><div class="setting-copy"><label>Eşik</label><span>Siyah / beyaz ayrım noktası</span></div><b class="threshold-v"></b><input class="range threshold" type="range" min="0" max="1024" step="1"></div>
-        <div class="setting"><div class="setting-copy"><label>Detay</label><span>İnce şekilleri ne kadar korusun</span></div><b class="detail-v"></b><input class="range detail" type="range" min="0" max="1024" step="1"></div>
-        <div class="setting"><div class="setting-copy"><label>Eğri</label><span>Akıcı Bézier eğri gücü</span></div><b class="smoothing-v"></b><input class="range smoothing" type="range" min="0" max="1024" step="1"></div>
-        <div class="setting"><div class="setting-copy"><label>Temizlik</label><span>Minik gereksiz bölgeleri birleştir</span></div><b class="cleanup-v"></b><input class="range cleanup" type="range" min="0" max="1024" step="1"></div>
-        <div class="setting quality-setting"><div class="setting-copy"><label>Kalite</label><span>0–1024 gerçek kalite değeri</span></div><b class="quality-v"></b><input class="range quality" type="range" min="0" max="1024" step="1"></div>
-        <div class="quality-hint"><b class="quality-name">DENGELİ</b><span>1024 = HAM · gerçek üst sınır · dosya boyutu umursanmaz · maxColors 1024 · simplify 0 · 32 iterasyon</span></div>
+        <div class="setting color-only"><div class="setting-copy"><label>Colors</label><span>Maximum number of colors</span></div><b class="colors-v"></b><input class="range colors" type="range" min="2" max="1024" step="1"></div>
+        <div class="setting mono-only"><div class="setting-copy"><label>Threshold</label><span>Black / white cutoff point</span></div><b class="threshold-v"></b><input class="range threshold" type="range" min="0" max="1024" step="1"></div>
+        <div class="setting"><div class="setting-copy"><label>Detail</label><span>Preserve fine shapes and regions</span></div><b class="detail-v"></b><input class="range detail" type="range" min="0" max="1024" step="1"></div>
+        <div class="setting"><div class="setting-copy"><label>Curves</label><span>Bézier curve smoothness</span></div><b class="smoothing-v"></b><input class="range smoothing" type="range" min="0" max="1024" step="1"></div>
+        <div class="setting"><div class="setting-copy"><label>Cleanup</label><span>Merge tiny unnecessary regions</span></div><b class="cleanup-v"></b><input class="range cleanup" type="range" min="0" max="1024" step="1"></div>
+        <div class="setting quality-setting"><div class="setting-copy"><label>Quality</label><span>True quality value from 0–1024</span></div><b class="quality-v"></b><input class="range quality" type="range" min="0" max="1024" step="1"></div>
+        <div class="quality-hint"><b class="quality-name">BALANCED</b><span>1024 = RAW · true upper limit · file size is not restricted · maxColors 1024 · simplify 0 · 32 iterations</span></div>
 
         <div class="setting-divider"></div>
-        <button class="toggle background"><span></span><div><b>Arka Planı Kaldır</b><small>Kenara bağlı baskın alanı temizler</small></div></button>
-        <button class="toggle invert mono-only"><span></span><div><b>Ters Çevir</b><small>Siyah ile beyazı değiştirir</small></div></button>
+        <button class="toggle background"><span></span><div><b>Remove Background</b><small>Removes the dominant edge-connected background region</small></div></button>
+        <button class="toggle invert mono-only"><span></span><div><b>Invert</b><small>Swaps black and white</small></div></button>
 
-        <div class="settings-note">VisionCortex VTracer 1.0 · Photo + Stacked · gerçek maxColors · 1024 = no-compromise fidelity · raster gömme yok.</div>
+        <div class="settings-note">VisionCortex VTracer 1.0 · Photo + Stacked · true maxColors · 1024 = no-compromise fidelity · no embedded raster images.</div>
       </div>
     </aside>
   </main>
 
-  <footer class="statusbar"><span class="status-text">hazır</span><span class="stats">Ałek’ryŧhæ Vector v${AV.VERSION}</span></footer>
+  <footer class="statusbar"><span class="status-text">ready</span><span class="stats">Ałek’ryŧhæ Vector v${AV.VERSION}</span></footer>
 </div>
 <div class="toast"></div>`;
 const root=document.createElement('div');root.innerHTML=html;while(root.firstChild)document.body.appendChild(root.firstChild);
@@ -226,7 +226,7 @@ const AV=window.AV,$=AV.$;
 AV.ui={
  setStatus(t){const e=$('.status-text');if(e)e.textContent=t},
  toast(t){const e=$('.toast');e.textContent=t;e.classList.add('show');clearTimeout(AV.ui._toast);AV.ui._toast=setTimeout(()=>e.classList.remove('show'),1900)},
- setBusy(on,stage='hazırlık'){AV.state.busy=on;$('.busy')?.classList.toggle('show',on);if(stage)$('.busy-stage').textContent=stage;if(!on)$('.progress i').style.width='0%'},
+ setBusy(on,stage='preparing'){AV.state.busy=on;$('.busy')?.classList.toggle('show',on);if(stage)$('.busy-stage').textContent=stage;if(!on)$('.progress i').style.width='0%'},
  progress(p,stage){$('.progress i').style.width=`${p}%`;if(stage)$('.busy-stage').textContent=stage}
 };
 AV.brandReadyPromise=Promise.allSettled([
@@ -256,7 +256,7 @@ AV.dismissSplash=()=>{
   },wait);
 };
 splash.addEventListener('click',()=>{
-  // Tıklama imzayı tamamen yok etmez; yalnız minimum gösterimden sonra hemen geçer.
+  // Clicking does not remove the signature instantly; it only skips after the minimum display time.
   AV.dismissSplash();
 });
 Promise.race([
@@ -276,7 +276,7 @@ AV.syncUI=()=>{
  $$('.mono-only').forEach(e=>e.style.display=s.mode==='mono'?'':'none');
  for(const k of ['colors','threshold','detail','smoothing','cleanup','quality']){const e=$('.'+k);if(e){e.value=s[k];const v=$('.'+k+'-v');if(v)v.textContent=String(s[k])}}
  $('.background')?.classList.toggle('on',s.background);$('.invert')?.classList.toggle('on',s.invert);
- const ml=$('.mode-label');if(ml)ml.textContent=s.mode==='color'?'RENKLİ':'S/B';const qn=$('.quality-name');if(qn)qn.textContent=AV.qualityName(s.quality);
+ const ml=$('.mode-label');if(ml)ml.textContent=s.mode==='color'?'COLOR':'B/W';const qn=$('.quality-name');if(qn)qn.textContent=AV.qualityName(s.quality);
  $$('.save').forEach(b=>b.disabled=!s.image);
 };
 })();
@@ -300,10 +300,10 @@ AV.revokeOwnedImageUrl=()=>{
 };
 
 AV.loadExternalDescriptor=function(desc){
- if(!desc?.url){AV.ui.toast('Görsel açılamadı: URL üretilemedi.');return}
+ if(!desc?.url){AV.ui.toast('Could not open image: no URL was created.');return}
  if(AV.state.currentWorker){try{AV.state.currentWorker.terminate()}catch(_){}AV.state.currentWorker=null}
  const previousUrl=AV.state.imageUrl;
- const img=new Image();img.decoding='async';AV.ui.setStatus('görsel yükleniyor');
+ const img=new Image();img.decoding='async';AV.ui.setStatus('loading image');
  img.onload=()=>{
    if(previousUrl&&previousUrl!==desc.url&&String(previousUrl).startsWith('blob:')){try{URL.revokeObjectURL(previousUrl)}catch(_){}}
    AV.state.file={name:desc.name||'image',size:Number(desc.size)||0,type:desc.mimeType||desc.type||''};
@@ -311,16 +311,16 @@ AV.loadExternalDescriptor=function(desc){
    $('.canvas-source').src=desc.url;$('.source-scene').classList.add('show');$('.source-empty').style.display='none';
    $('.result-empty').style.display='grid';$('.result-scene').classList.remove('show');
    $('.source-info').textContent=`${img.naturalWidth} × ${img.naturalHeight} · ${AV.formatBytes(Number(desc.size)||0)}`;
-   AV.fitScene();AV.syncUI();AV.ui.setStatus('ayarları seç · trace için bekliyor');AV.schedulePreview(true);
+   AV.fitScene();AV.syncUI();AV.ui.setStatus('adjust settings · waiting to trace');AV.schedulePreview(true);
  };
- img.onerror=()=>{if(String(desc.url).startsWith('blob:')){try{URL.revokeObjectURL(desc.url)}catch(_){}}AV.ui.toast('Görsel açılamadı.');AV.ui.setStatus('hata')};
+ img.onerror=()=>{if(String(desc.url).startsWith('blob:')){try{URL.revokeObjectURL(desc.url)}catch(_){}}AV.ui.toast('Could not open image.');AV.ui.setStatus('error')};
  img.src=desc.url;
 };
 
 AV.loadLocalFile=function(file){
  if(!file)return;
  const ok=/^image\/(png|jpeg|webp|bmp)$/i.test(file.type||'')||/\.(png|jpe?g|webp|bmp)$/i.test(file.name||'');
- if(!ok){AV.ui.toast('Desteklenen görsel: PNG, JPG, JPEG, WEBP, BMP');return}
+ if(!ok){AV.ui.toast('Supported image formats: PNG, JPG, JPEG, WEBP, BMP');return}
  const url=URL.createObjectURL(file);
  AV.loadExternalDescriptor({url,name:file.name,size:file.size,mimeType:file.type||'',path:''});
 };
@@ -351,9 +351,9 @@ AV.pickImage=async function(){
 
  // Compatibility fallback for older Core builds.
  try{
-   if(typeof window.__alekPickExternalMedia!=='function')throw new Error('Dosya seçici kullanılamıyor');
+   if(typeof window.__alekPickExternalMedia!=='function')throw new Error('File picker is unavailable');
    const r=await window.__alekPickExternalMedia({multiple:false,extensions:['png','jpg','jpeg','webp','bmp']});
-   if(!r?.ok){AV.ui.toast(r?.error||'Dosya seçilemedi.');return}
+   if(!r?.ok){AV.ui.toast(r?.error||'File could not be selected.');return}
    if(r.cancelled)return;
    const f=r.files?.[0];if(f)AV.loadExternalDescriptor(f);
  }catch(e){console.error(e);AV.ui.toast(String(e?.message||e));}
@@ -371,7 +371,7 @@ AV.traceDim=()=>{
  return{w:Math.max(1,Math.round(img.naturalWidth*scale)),h:Math.max(1,Math.round(img.naturalHeight*scale)),scale,quality:q};
 };
 AV.canvasForTrace=()=>{const d=AV.traceDim(),c=document.createElement('canvas');c.width=d.w;c.height=d.h;const ctx=c.getContext('2d',{alpha:true,willReadFrequently:true});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(AV.state.image,0,0,d.w,d.h);return{canvas:c,ctx,...d}};
-AV.blobToBase64=blob=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]||'');r.onerror=()=>reject(r.error||new Error('Base64 okunamadı'));r.readAsDataURL(blob)});
+AV.blobToBase64=blob=>new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result).split(',')[1]||'');r.onerror=()=>reject(r.error||new Error('Could not read Base64 data'));r.readAsDataURL(blob)});
 AV.prepareMonoInput=async()=>{
  const {canvas,ctx,w,h}=AV.canvasForTrace(),id=ctx.getImageData(0,0,w,h),d=id.data,t=AV.clamp(AV.state.threshold,0,1024)*(255/1024),invert=AV.state.invert;
  for(let i=0;i<d.length;i+=4){if(d[i+3]<12)continue;const y=.2126*d[i]+.7152*d[i+1]+.0722*d[i+2];let black=y<t;if(invert)black=!black;const v=black?0:255;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255}
@@ -399,14 +399,14 @@ AV.engine.health=async()=>{
   try{
     const r=await fetch(AV.engine.baseUrl+'/health?ts='+Date.now(),{mode:'cors',cache:'no-store',signal:c.signal});
     if(!r.ok)throw new Error('HTTP '+r.status);
-    const j=await r.json();if(!j?.ok)throw new Error('motor_hazir_degil');
+    const j=await r.json();if(!j?.ok)throw new Error('engine_not_ready');
     AV.engine.healthCache=j;AV.engine.healthAt=now;return j;
   }catch(e){
-    throw new Error('Motor bağlantısı kurulamadı: '+String(e?.message||e));
+    throw new Error('Could not connect to the engine: '+String(e?.message||e));
   }finally{clearTimeout(t)}
 };
 AV.engine.run=async({canvas,options,mode})=>{
-  await AV.engine.health().catch(e=>{throw new Error('Yerel Vector motoruna ulaşılamıyor. INSTALL_ENGINE.cmd dosyasını çalıştır. '+String(e?.message||e))});
+  await AV.engine.health().catch(e=>{throw new Error('The local Vector engine is unreachable. Run INSTALL_ENGINE.cmd. '+String(e?.message||e))});
   AV.engine.interrupt();
   const c=new AbortController();AV.engine.controller=c;
   const ctx=canvas.getContext('2d',{alpha:true,willReadFrequently:true});
@@ -426,8 +426,8 @@ AV.engine.run=async({canvas,options,mode})=>{
       headers:{'Content-Type':'application/octet-stream'},body:img.data.buffer
     });
     const text=await r.text();
-    if(!r.ok)throw new Error(text.slice(0,600)||('Vector motoru HTTP '+r.status));
-    if(!/<svg\b/i.test(text))throw new Error('Motor geçerli SVG döndürmedi');
+    if(!r.ok)throw new Error(text.slice(0,600)||('Vector engine HTTP '+r.status));
+    if(!/<svg\b/i.test(text))throw new Error('Engine did not return a valid SVG');
     return{svg:text,w:canvas.width,h:canvas.height};
   }catch(e){
     if(e?.name==='AbortError')throw new Error('trace_cancelled');
@@ -494,8 +494,8 @@ AV.renderPreview=res=>{
   const img=$('.canvas-result');
   if(res.rawOnly){
     $('.result-scene').classList.remove('show');$('.result-empty').style.display='grid';
-    $('.result-empty strong').textContent='Tam SVG hazır';
-    $('.result-empty span').textContent=`${AV.formatBytes(res.size)} gerçek vektör üretildi. Bu HAM / ağır SVG olduğu için önizleme render edilmedi; SVG Kaydet dosyayı aynen kaydeder.`;
+    $('.result-empty strong').textContent='Full SVG is ready';
+    $('.result-empty span').textContent=`${AV.formatBytes(res.size)} of real vector data was generated. This RAW / heavy SVG was not rendered in the preview to avoid locking the WebView; Save SVG will save it unchanged.`;
     return;
   }
   const blob=new Blob([res.svg],{type:'image/svg+xml'}),url=URL.createObjectURL(blob);
@@ -509,16 +509,16 @@ AV.runPreview=async()=>{
   if(AV.state.busy){AV.state.pendingTrace=true;return null}
   const t0=AV.now();AV.state.busy=true;AV.state.pendingTrace=false;
   const serial=++AV.state.serial;
-  AV.ui.setBusy(true,'Yerel VTracer motoru hazırlanıyor');AV.ui.setStatus('SVG çiziliyor');AV.syncUI();
+  AV.ui.setBusy(true,'Preparing local VTracer engine');AV.ui.setStatus('Generating SVG');AV.syncUI();
   try{
-    const prep=AV.prepareEngineCanvas(),options=AV.engineOptions();AV.ui.progress(12,'Ałek görüntü hazırlığı');
+    const prep=AV.prepareEngineCanvas(),options=AV.engineOptions();AV.ui.progress(12,'Ałek image preparation');
     const rr=await AV.engine.run({canvas:prep.canvas,options,mode:AV.state.mode});
     if(serial!==AV.state.serial)return null;
-    AV.ui.progress(90,'Ałek SVG doğrulama / refine');
+    AV.ui.progress(90,'Ałek SVG validation / refine');
     const rawBytes=new TextEncoder().encode(rr.svg).byteLength;
     let res;
     if(rawBytes>AV.CONFIG.hugeSvgRenderLimit){
-      if(/<image\b/i.test(rr.svg))throw new Error('Raster image gömme tespit edildi');
+      if(/<image\b/i.test(rr.svg))throw new Error('Embedded raster image detected');
       res={svg:rr.svg,size:rawBytes,bytes:rawBytes,rawOnly:true,pathCount:(rr.svg.match(/<path\b/gi)||[]).length,cubicCount:(rr.svg.match(/[cC](?=[\s\d+\-.])/g)||[]).length};
     }else{
       res=AV.refineSvg(rr.svg,{background:AV.state.background,cleanup:AV.state.cleanup});res.size=res.bytes;res.rawOnly=false;
@@ -527,13 +527,13 @@ AV.runPreview=async()=>{
     AV.renderPreview(res);AV.state.preview=res;AV.state.lastSuccessfulPreview=res;AV.state.previewKey=key;AV.state.lastTraceMs=res.ms;
     const pc=Number(res.pathCount)||0,cc=Number(res.cubicCount)||0;
     $('.trace-info').textContent=`${prep.w}×${prep.h} · ${pc.toLocaleString('tr-TR')} path · ${cc.toLocaleString('tr-TR')} cubic · ${(res.ms/1000).toFixed(1)} sn`;
-    $('.stats').textContent=`VTracer 1.0 Photo + Ałek${options.true1024?' · HAM 1024':''} · ${AV.formatBytes(res.size)}`;AV.ui.setStatus('hazır');
+    $('.stats').textContent=`VTracer 1.0 Photo + Ałek${options.true1024?' · RAW 1024':''} · ${AV.formatBytes(res.size)}`;AV.ui.setStatus('ready');
     return res;
   }catch(err){
     if(serial!==AV.state.serial||String(err?.message||err)==='trace_cancelled')return null;
-    console.error(err);AV.ui.setStatus('hata');
+    console.error(err);AV.ui.setStatus('error');
     const reason=String(err?.message||err||'').split('\n')[0].slice(0,180);
-    AV.ui.toast(AV.state.lastSuccessfulPreview?`Yeni trace başarısız · son SVG korundu · ${reason}`:`SVG oluşturulamadı · ${reason}`);
+    AV.ui.toast(AV.state.lastSuccessfulPreview?`New trace failed · previous SVG preserved · ${reason}`:`Could not generate SVG · ${reason}`);
     return null;
   }finally{
     AV.state.busy=false;AV.ui.setBusy(false);AV.syncUI();
@@ -546,7 +546,7 @@ AV.ensurePreviewCurrent=async()=>{
   if(AV.state.preview&&AV.state.previewKey===AV.traceKey())return AV.state.preview;
   await AV.runPreview();
   if(AV.state.preview&&AV.state.previewKey===AV.traceKey())return AV.state.preview;
-  throw new Error('Güncel SVG yok');
+  throw new Error('No current SVG is available');
 };
 })();
 
@@ -566,10 +566,10 @@ function fillLuma(el){
  const n=parseInt(m[1],16),r=(n>>16)&255,g=(n>>8)&255,b=n&255;return .2126*r+.7152*g+.0722*b;
 }
 AV.refineSvg=function(svgText,options={}){
- if(!svgText||!/<svg\b/i.test(svgText))throw new Error('Motor geçerli SVG üretmedi');
+ if(!svgText||!/<svg\b/i.test(svgText))throw new Error('Engine did not generate a valid SVG');
  const doc=new DOMParser().parseFromString(svgText,'image/svg+xml');
  if(doc.querySelector('parsererror'))throw new Error('SVG parse edilemedi');
- const svg=doc.documentElement;if(svg.localName!=='svg')throw new Error('SVG kökü bulunamadı');
+ const svg=doc.documentElement;if(svg.localName!=='svg')throw new Error('SVG root element was not found');
  svg.querySelectorAll('script,foreignObject,image').forEach(n=>n.remove());
  svg.setAttribute('shape-rendering','geometricPrecision');
  svg.setAttribute('data-generator','Ałek’ryŧhæ Vector v0.1.0 · VisionCortex VTracer 1.0');
@@ -598,7 +598,7 @@ AV.refineSvg=function(svgText,options={}){
  const finalPaths=Array.from(svg.querySelectorAll('path'));
  const cubic=(new XMLSerializer().serializeToString(svg).match(/[cC](?=[\s\d+\-.])/g)||[]).length;
  const out='<?xml version="1.0" encoding="UTF-8"?>\n'+new XMLSerializer().serializeToString(svg);
- if(/<image\b/i.test(out))throw new Error('Raster image gömme tespit edildi');
+ if(/<image\b/i.test(out))throw new Error('Embedded raster image detected');
  return{svg:out,pathCount:finalPaths.length,cubicCount:cubic,removedBackground,removedInvalid,bytes:new TextEncoder().encode(out).byteLength};
 };
 })();
@@ -608,17 +608,17 @@ AV.refineSvg=function(svgText,options={}){
 const AV=window.AV;
 AV.downloadUrl=(url,name)=>{const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove()};
 AV.exportSvg=async()=>{
- if(!AV.state.image)return;AV.ui.setStatus('SVG kaydediliyor');
+ if(!AV.state.image)return;AV.ui.setStatus('Saving SVG');
  let r=null;
  try{r=await AV.ensurePreviewCurrent()}
- catch(e){console.error(e);r=AV.state.lastSuccessfulPreview||AV.state.preview||null;if(!r){AV.ui.setStatus('hata');AV.ui.toast('Kaydedilecek SVG yok.');return}AV.ui.toast('Güncel trace başarısız · son başarılı SVG kaydediliyor.')}
+ catch(e){console.error(e);r=AV.state.lastSuccessfulPreview||AV.state.preview||null;if(!r){AV.ui.setStatus('error');AV.ui.toast('No SVG is available to save.');return}AV.ui.toast('Current trace failed · saving the last successful SVG.')}
  try{
-   const name=`${AV.baseName()}-${AV.state.mode==='mono'?'siyah-beyaz':'renkli'}.svg`;
+   const name=`${AV.baseName()}-${AV.state.mode==='mono'?'black-white':'color'}.svg`;
    if(r.svg){AV.downloadBlob(new Blob([r.svg],{type:'image/svg+xml'}),name)}
    else if(r.url){AV.downloadUrl(r.url,name)}
    else throw new Error('SVG payload yok');
-   AV.ui.setStatus('SVG kaydedildi');AV.ui.toast(r.rawOnly?'Büyük SVG doğrudan kaydetmeye gönderildi.':'Ekrandaki doğrulanmış SVG kaydedildi.');
- }catch(e){console.error(e);AV.ui.setStatus('hata');AV.ui.toast('SVG kaydedilemedi: '+String(e?.message||e).slice(0,100))}
+   AV.ui.setStatus('SVG saved');AV.ui.toast(r.rawOnly?'Large SVG was sent directly to the save operation.':'The validated SVG shown on screen was saved.');
+ }catch(e){console.error(e);AV.ui.setStatus('error');AV.ui.toast('Could not save SVG: '+String(e?.message||e).slice(0,100))}
 };
 })();
 
@@ -652,7 +652,7 @@ document.addEventListener('visibilitychange',()=>{if(document.hidden&&AV.state.b
 (function(){
 'use strict';
 const AV=window.AV;
-AV.syncUI();AV.ui.setStatus('hazır');
+AV.syncUI();AV.ui.setStatus('ready');
 (async()=>{
  try{
    // v3.1.1 uses the browser/WebView native file picker first.
