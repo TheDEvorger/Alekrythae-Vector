@@ -15,7 +15,6 @@ pnpm-debug.log*
 .yarn/cache/
 .yarn/unplugged/
 .pnpm-store/
-README.md
 
 # Keep lockfiles tracked intentionally.
 # DO NOT add package-lock.json / yarn.lock / pnpm-lock.yaml here.
